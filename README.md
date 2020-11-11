@@ -14,9 +14,9 @@ For details about the ja3 fingerprint algorithm, check initial [project](https:/
 
 No directives yet.
 
-### Variables
+### HTTP variables
 
-#### $http_ssl_ja3
+#### $ja3
 
 The ja3 fingerprint string for a SSL connection for a HTTP server.
 
@@ -24,7 +24,7 @@ The ja3 fingerprint string for a SSL connection for a HTTP server.
 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53-10,0-23-65281-10-11-35-16-5-13-18-51-45-43-21,0-29-23-24,0
 ```
 
-#### $http_ssl_ja3_hash
+#### $ja3_hash
 
 The ja3 fingerprint MD5 hash for a SSL connection for a HTTP server.
 
@@ -37,16 +37,18 @@ http {
         ssl_certificate        cert.pem;
         ssl_certificate_key    rsa.key;
         error_log              /dev/stderr debug;
-        return                 200 "$time_iso8601\n\n$http_user_agent\n\n$http_ssl_ja3\n\n$http_ssl_ja3_hash\n";
+        return                 200 "$time_iso8601\n\n$http_user_agent\n\n$ja3\n\n$ja3_hash\n";
     }
 }
 ```
 
-#### $stream_ssl_ja3
+### Stream variables
+
+#### $ja3
 
 The ja3 fingerprint string for a SSL connection for a stream server.
 
-#### $stream_ssl_ja3_hash
+#### $ja3_hash
 
 The ja3 fingerprint MD5 hash for a SSL connection for a stream server.
 
@@ -59,7 +61,7 @@ stream {
         ssl_certificate        cert.pem;
         ssl_certificate_key    rsa.key;
         error_log              /dev/stderr debug;
-        return                 "$time_iso8601\n\n$stream_ssl_ja3\n\n$stream_ssl_ja3_hash\n";
+        return                 "$time_iso8601\n\n$ja3\n\n$ja3_hash\n";
     }
 }
 ```
@@ -68,7 +70,7 @@ stream {
 
 ### Dependencies
 
-* [OpenSSL](https://github.com/openssl) - 1.1.1 (dev master version)
+* [OpenSSL](https://github.com/openssl) - 1.1.1
 
 The master version OpenSSL is required because this module fetches the
 extensions types declared at SSL/TLS Client Hello by using the new early
@@ -115,12 +117,13 @@ Hunk #1 succeeded at 99 (offset 1 line).
 
 # Configure
 
-
-
-$ ./configure --add-module=/build/ngx_ssl_ja3 --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream
-
+## Static module
 
 $ ./configure --add-module=/build/ngx_ssl_ja3 --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream
+
+## Dynamic module
+
+$ ./configure --add-dynamic-module=/build/ngx_ssl_ja3 --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream
 
 # Install
 
