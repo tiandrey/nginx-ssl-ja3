@@ -115,6 +115,11 @@ Hunk #1 succeeded at 99 (offset 1 line).
 
 # Configure
 
+
+
+$ ./configure --add-module=/build/ngx_ssl_ja3 --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream
+
+
 $ ./configure --add-module=/build/ngx_ssl_ja3 --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream
 
 # Install
@@ -151,6 +156,8 @@ Creating nginx-ssl-ja3
 @**Sessa93**
 
 @**bartebor**
+
+@**tiandrey**
 
 ## Fair Warning
 

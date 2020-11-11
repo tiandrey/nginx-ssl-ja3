@@ -1,12 +1,12 @@
 diff -Naurp nginx-1.14.0.orig/src/event/ngx_event_openssl.c nginx-1.14.0/src/event/ngx_event_openssl.c
 --- nginx-1.14.0.orig/src/event/ngx_event_openssl.c	2018-04-17 18:22:36.000000000 +0300
-+++ nginx-1.14.0/src/event/ngx_event_openssl.c	2020-10-26 21:08:09.110961786 +0300
++++ nginx-1.14.0/src/event/ngx_event_openssl.c	2020-10-28 18:49:53.393114674 +0300
 @@ -1220,6 +1220,107 @@ ngx_ssl_set_session(ngx_connection_t *c,
      return NGX_OK;
  }
  
 +/* ----- JA3 HACK START -----------------------------------------------------*/
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#ifdef NGX_JA3_ENABLED
 +
 +void
 +ngx_SSL_client_features(ngx_connection_t *c) {
@@ -113,7 +113,7 @@ diff -Naurp nginx-1.14.0.orig/src/event/ngx_event_openssl.c nginx-1.14.0/src/eve
  
      ngx_ssl_clear_error(c->log);
  
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#ifdef NGX_JA3_ENABLED
 +    SSL_CTX_set_client_hello_cb(c->ssl->session_ctx, ngx_SSL_early_cb_fn, c);
 +#endif
 +
@@ -125,7 +125,7 @@ diff -Naurp nginx-1.14.0.orig/src/event/ngx_event_openssl.c nginx-1.14.0/src/eve
          c->ssl->handshaked = 1;
  
 +/* ----- JA3 HACK START -----------------------------------------------------*/
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#ifdef NGX_JA3_ENABLED
 +        ngx_SSL_client_features(c);
 +#endif
 +/* ----- JA3 HACK END -------------------------------------------------------*/
@@ -135,14 +135,27 @@ diff -Naurp nginx-1.14.0.orig/src/event/ngx_event_openssl.c nginx-1.14.0/src/eve
          c->recv_chain = ngx_ssl_recv_chain;
 diff -Naurp nginx-1.14.0.orig/src/event/ngx_event_openssl.h nginx-1.14.0/src/event/ngx_event_openssl.h
 --- nginx-1.14.0.orig/src/event/ngx_event_openssl.h	2018-04-17 18:22:36.000000000 +0300
-+++ nginx-1.14.0/src/event/ngx_event_openssl.h	2020-10-26 21:10:34.943067201 +0300
-@@ -86,6 +86,23 @@ struct ngx_ssl_connection_s {
++++ nginx-1.14.0/src/event/ngx_event_openssl.h	2020-10-28 18:45:15.556974058 +0300
+@@ -60,6 +60,12 @@
+ #endif
+ 
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#ifdef NGX_JA3
++#define NGX_JA3_ENABLED
++#endif
++#endif
++
+ struct ngx_ssl_s {
+     SSL_CTX                    *ctx;
+     ngx_log_t                  *log;
+@@ -86,6 +92,23 @@ struct ngx_ssl_connection_s {
      unsigned                    no_wait_shutdown:1;
      unsigned                    no_send_shutdown:1;
      unsigned                    handshake_buffer_set:1;
 +
 +/* ----- JA3 HACK START -----------------------------------------------------*/
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#ifdef NGX_JA3_ENABLED
 +
 +    size_t                      ciphers_sz;
 +    unsigned short             *ciphers;
